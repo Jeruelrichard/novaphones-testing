@@ -31,12 +31,32 @@ const fetchJson = async (url, options) => {
   return data;
 };
 
-const getCloudinarySignature = async () =>
-  fetchJson('/api/admin/cloudinary/sign', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({}),
-  });
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Vercel/edge/network hiccups can occasionally cause a transient fetch failure on the
+// first request. Retry once to make the UX resilient without hiding persistent issues.
+const getCloudinarySignature = async () => {
+  const attempt = () =>
+    fetchJson('/api/admin/cloudinary/sign', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+      body: JSON.stringify({}),
+    });
+
+  try {
+    return await attempt();
+  } catch (error) {
+    const retryable =
+      error?.message === 'network_error' ||
+      error?.status === 502 ||
+      error?.status === 503 ||
+      error?.status === 504;
+    if (!retryable) throw error;
+    await sleep(650);
+    return attempt();
+  }
+};
 
 const uploadToCloudinary = async (file) => {
   const sig = await getCloudinarySignature();
