@@ -1,0 +1,12 @@
+{
+  "name": "novaphones-storefront",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  },
+  "scripts": {
+    "dev": "node server/server.js",
+    "hash-password": "node server/scripts/hash-password.js"
+  }
+}

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NovaPhones Admin | Login</title>
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="container nav-inner">
+        <a class="brand" href="../index.html">
+          <span class="brand-badge">NP</span>
+          <span>NovaPhones</span>
+        </a>
+        <div class="nav-links">
+          <a href="../index.html">Storefront</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="section">
+      <div class="container admin-layout">
+        <div class="cart-card admin-card">
+          <h2 style="margin-top: 0;">Admin Login</h2>
+          <p class="section-sub">
+            Sign in to add, update, or delete products. Customer accounts are not
+            supported.
+          </p>
+
+          <form class="admin-form" data-admin-login>
+            <label>
+              Email
+              <input type="email" autocomplete="username" required data-email />
+            </label>
+            <label>
+              Password
+              <input
+                type="password"
+                autocomplete="current-password"
+                required
+                data-password
+              />
+            </label>
+            <button class="button primary" type="submit">Login</button>
+            <p class="admin-error" data-error hidden></p>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="../assets/js/pages/admin-login.js"></script>
+  </body>
+</html>
+

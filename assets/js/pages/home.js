@@ -69,7 +69,10 @@ const renderProducts = () => {
         <article class="card">
           <div class="card-content">
             <div class="badge">${item.badge}</div>
-            <div class="phone-preview" aria-hidden="true"><span>${item.brand}</span></div>
+            <div class="phone-preview" aria-hidden="true">
+              ${item.imageUrl ? `<img src="${item.imageUrl}" alt="" loading="lazy" />` : ''}
+              <span>${item.brand}</span>
+            </div>
             <h3>${item.name}</h3>
             <p>${item.short}</p>
             <div class="price">${formatCurrency(item.price)}</div>

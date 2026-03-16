@@ -1,0 +1,189 @@
+[
+  {
+    "id": "new-phone",
+    "name": "New Phone",
+    "brand": "Itel",
+    "price": 26000,
+    "badge": "Fresh",
+    "short": "This phone is powerful",
+    "description": "Never mind ohhh",
+    "specs": {
+      "display": "5.7oled 120hz",
+      "camera": "50mp",
+      "battery": "6000mAh",
+      "storage": "126gb"
+    },
+    "colors": [
+      "red",
+      "blue"
+    ],
+    "tags": [
+      "3G"
+    ],
+    "imageUrl": "/uploads/20231022-150232-608ee1d318a902c0.jpg",
+    "createdAt": "2026-03-16T13:03:35.883Z",
+    "updatedAt": "2026-03-16T13:03:35.883Z"
+  },
+  {
+    "id": "zenith-ultra",
+    "name": "Zenith Ultra Max",
+    "brand": "Apex",
+    "price": 724000,
+    "badge": "Pro Series",
+    "short": "Periscope zoom and studio audio capture in a matte titanium frame.",
+    "description": "Zenith Ultra Max ships with a custom AI ISP for night mode and a 5x optical zoom lens. The titanium frame keeps the device light, while the new haptics deliver a premium feel in every interaction.",
+    "specs": {
+      "display": "6.8\" AMOLED 120Hz",
+      "camera": "108MP + 12MP",
+      "battery": "5000mAh",
+      "storage": "512GB"
+    },
+    "colors": [
+      "Titanium Grey",
+      "Deep Copper"
+    ],
+    "tags": [
+      "Flagship",
+      "Camera",
+      "5G"
+    ],
+    "imageUrl": null,
+    "createdAt": "2026-03-16T00:00:00.000Z",
+    "updatedAt": "2026-03-16T00:00:00.000Z"
+  },
+  {
+    "id": "glide-s7",
+    "name": "Glide S7+",
+    "brand": "Nova Mobile",
+    "price": 389000,
+    "badge": "Hot",
+    "short": "Fast charging, smooth performance, and a camera built for night markets.",
+    "description": "Glide S7+ balances speed and style with a 4nm chipset and 80W fast charging. The large sensor captures bright photos in dim environments, perfect for night markets and city walks.",
+    "specs": {
+      "display": "6.6\" OLED 120Hz",
+      "camera": "64MP + 8MP",
+      "battery": "5000mAh",
+      "storage": "256GB"
+    },
+    "colors": [
+      "Obsidian",
+      "Sunrise Gold"
+    ],
+    "tags": [
+      "Performance",
+      "Fast Charge",
+      "5G"
+    ],
+    "imageUrl": null,
+    "createdAt": "2026-03-16T00:00:00.000Z",
+    "updatedAt": "2026-03-16T00:00:00.000Z"
+  },
+  {
+    "id": "aura-lite",
+    "name": "Aura Lite",
+    "brand": "Apex",
+    "price": 265000,
+    "badge": "Everyday",
+    "short": "Slim, bright, and reliable with 2-day endurance.",
+    "description": "Aura Lite is built for everyday hustle with a 5000mAh battery and a 50MP main camera. The lightweight body makes it easy to handle all day, while the 90Hz panel keeps it smooth.",
+    "specs": {
+      "display": "6.5\" LCD 90Hz",
+      "camera": "50MP + 2MP",
+      "battery": "5000mAh",
+      "storage": "128GB"
+    },
+    "colors": [
+      "Graphite",
+      "Mint Blue"
+    ],
+    "tags": [
+      "Budget",
+      "Battery",
+      "4G"
+    ],
+    "imageUrl": null,
+    "createdAt": "2026-03-16T00:00:00.000Z",
+    "updatedAt": "2026-03-16T00:00:00.000Z"
+  },
+  {
+    "id": "ion-mini",
+    "name": "Ion Mini",
+    "brand": "Orbit",
+    "price": 298000,
+    "badge": "Compact",
+    "short": "Compact size with flagship-grade materials.",
+    "description": "Ion Mini packs premium materials into a one-hand design. The tuned stereo speakers and efficient chip make it a pocket powerhouse for commuting and travel.",
+    "specs": {
+      "display": "6.0\" OLED 90Hz",
+      "camera": "48MP + 12MP",
+      "battery": "4400mAh",
+      "storage": "256GB"
+    },
+    "colors": [
+      "Chalk White",
+      "Midnight Navy"
+    ],
+    "tags": [
+      "Compact",
+      "Travel",
+      "5G"
+    ],
+    "imageUrl": null,
+    "createdAt": "2026-03-16T00:00:00.000Z",
+    "updatedAt": "2026-03-16T00:00:00.000Z"
+  },
+  {
+    "id": "volt-edge",
+    "name": "Volt Edge",
+    "brand": "Helio",
+    "price": 342000,
+    "badge": "Performance",
+    "short": "Cooling-focused gaming phone with shoulder triggers.",
+    "description": "Volt Edge is tuned for sustained performance with a graphene cooling stack. The shoulder triggers and dual speakers make it a favorite for competitive mobile gaming.",
+    "specs": {
+      "display": "6.7\" AMOLED 144Hz",
+      "camera": "50MP + 13MP",
+      "battery": "5200mAh",
+      "storage": "256GB"
+    },
+    "colors": [
+      "Carbon Black",
+      "Neon Lime"
+    ],
+    "tags": [
+      "Gaming",
+      "Performance",
+      "5G"
+    ],
+    "imageUrl": null,
+    "createdAt": "2026-03-16T00:00:00.000Z",
+    "updatedAt": "2026-03-16T00:00:00.000Z"
+  },
+  {
+    "id": "lumen-fold",
+    "name": "Lumen Fold",
+    "brand": "Helio",
+    "price": 890000,
+    "badge": "Foldable",
+    "short": "Ultra-thin foldable with dual displays and stylus support.",
+    "description": "Lumen Fold blends productivity with portability. Open it for a 7.2\" tablet experience or use the outer display for quick tasks. The hinge is rated for 400k folds.",
+    "specs": {
+      "display": "7.2\" Foldable OLED",
+      "camera": "50MP + 12MP",
+      "battery": "4800mAh",
+      "storage": "512GB"
+    },
+    "colors": [
+      "Shadow Black",
+      "Sandstone"
+    ],
+    "tags": [
+      "Foldable",
+      "Premium",
+      "5G"
+    ],
+    "imageUrl": null,
+    "createdAt": "2026-03-16T00:00:00.000Z",
+    "updatedAt": "2026-03-16T00:00:00.000Z"
+  }
+]

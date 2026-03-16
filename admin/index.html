@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NovaPhones Admin | Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="container nav-inner">
+        <a class="brand" href="../index.html">
+          <span class="brand-badge">NP</span>
+          <span>NovaPhones</span>
+        </a>
+        <div class="nav-links">
+          <a href="../index.html">Storefront</a>
+          <button class="nav-cart" type="button" data-logout>Logout</button>
+        </div>
+      </div>
+    </nav>
+
+    <main class="section">
+      <div class="container">
+        <div class="section-title">
+          <div>
+            <h2>Admin Dashboard</h2>
+            <p class="section-sub">Create products, upload images, and delete items.</p>
+          </div>
+        </div>
+
+        <div class="admin-grid">
+          <div class="cart-card">
+            <h3 style="margin-top: 0;">Add product</h3>
+            <form class="admin-form" data-product-form>
+              <div class="admin-form-grid">
+                <label>
+                  Name
+                  <input type="text" required data-name />
+                </label>
+                <label>
+                  Brand
+                  <input type="text" required data-brand />
+                </label>
+                <label>
+                  Price (NGN)
+                  <input type="number" min="0" required data-price />
+                </label>
+                <label>
+                  Badge
+                  <input type="text" placeholder="New" data-badge />
+                </label>
+              </div>
+
+              <label>
+                Short description
+                <input type="text" placeholder="One-line highlight" data-short />
+              </label>
+
+              <label>
+                Full description
+                <textarea rows="4" data-description></textarea>
+              </label>
+
+              <div class="admin-form-grid">
+                <label>
+                  Display
+                  <input type="text" placeholder='6.7" OLED 120Hz' data-spec-display />
+                </label>
+                <label>
+                  Camera
+                  <input type="text" placeholder="50MP + 48MP" data-spec-camera />
+                </label>
+                <label>
+                  Battery
+                  <input type="text" placeholder="5100mAh" data-spec-battery />
+                </label>
+                <label>
+                  Storage
+                  <input type="text" placeholder="256GB" data-spec-storage />
+                </label>
+              </div>
+
+              <div class="admin-form-grid">
+                <label>
+                  Colors (comma separated)
+                  <input type="text" placeholder="Black, Silver" data-colors />
+                </label>
+                <label>
+                  Tags (comma separated)
+                  <input type="text" placeholder="Flagship, 5G" data-tags />
+                </label>
+              </div>
+
+              <label>
+                Product image
+                <input type="file" accept="image/*" data-image />
+              </label>
+
+              <div class="product-actions">
+                <button class="button primary" type="submit">Upload product</button>
+                <button class="button secondary" type="reset">Clear</button>
+              </div>
+
+              <p class="admin-error" data-form-error hidden></p>
+              <p class="admin-success" data-form-success hidden></p>
+            </form>
+          </div>
+
+          <div class="cart-card">
+            <div class="admin-products-header">
+              <h3 style="margin: 0;">Products</h3>
+              <button class="button secondary" type="button" data-refresh>
+                Refresh
+              </button>
+            </div>
+            <div class="admin-products" data-products></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="../assets/js/pages/admin.js"></script>
+  </body>
+</html>
+
