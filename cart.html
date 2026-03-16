@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NovaPhones | Cart</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="container nav-inner">
+        <a class="brand" href="index.html">
+          <span class="brand-badge">NP</span>
+          <span>NovaPhones</span>
+        </a>
+        <form class="search nav-search" action="index.html">
+          <input
+            type="search"
+            name="q"
+            placeholder="Search phones, brands, tags"
+            aria-label="Search products"
+          />
+          <button class="button secondary" type="submit">Search</button>
+        </form>
+        <div class="nav-links">
+          <a href="index.html">Catalog</a>
+          <a href="cart.html" class="nav-cart">Cart <span data-cart-count>0</span></a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="section">
+      <div class="container">
+        <div class="section-title">
+          <h2>Your cart</h2>
+        </div>
+        <div class="cart-layout">
+          <div class="cart-card" data-cart-items></div>
+          <div class="cart-card">
+            <h3>Order summary</h3>
+            <div class="cart-summary" data-cart-summary></div>
+            <div class="product-actions" style="margin-top: 20px;">
+              <a class="button primary" data-checkout href="#">Checkout on WhatsApp</a>
+              <a class="button secondary" href="index.html">Continue shopping</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        We finalize payment and delivery details in WhatsApp.
+      </div>
+    </footer>
+
+    <script type="module" src="assets/js/pages/cart.js"></script>
+  </body>
+</html>

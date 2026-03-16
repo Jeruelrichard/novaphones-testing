@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NovaPhones | Smartphone Store</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="container nav-inner">
+        <a class="brand" href="index.html">
+          <span class="brand-badge">NP</span>
+          <span>NovaPhones</span>
+        </a>
+        <form class="search nav-search" data-search-form action="index.html">
+          <input
+            type="search"
+            name="q"
+            placeholder="Search phones, brands, tags"
+            aria-label="Search products"
+            data-search-input
+          />
+          <button class="button secondary" type="submit">Search</button>
+        </form>
+        <div class="nav-links">
+          <a href="index.html">Catalog</a>
+          <a href="index.html#featured">Featured</a>
+          <a href="cart.html" class="nav-cart">Cart <span data-cart-count>0</span></a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="hero-tag">Flagship drops weekly</span>
+          <h1>Upgrade your everyday with phones that feel futuristic.</h1>
+          <p>
+            NovaPhones curates the most exciting smartphones in one place. From
+            creator-centric cameras to battery beasts, build your perfect setup
+            and checkout directly on WhatsApp.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#featured">Shop Featured</a>
+            <a class="button secondary" href="cart.html">View Cart</a>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="hero-card-grid">
+            <div class="kpi">
+              <strong data-kpi-total>0</strong>
+              <span>Curated devices</span>
+            </div>
+            <div class="kpi">
+              <strong data-kpi-brands>0</strong>
+              <span>Top brands</span>
+            </div>
+            <div class="kpi">
+              <strong data-kpi-price>0</strong>
+              <span>Avg flagship price</span>
+            </div>
+            <div class="kpi">
+              <strong>24/7</strong>
+              <span>WhatsApp support</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="section" id="featured">
+      <div class="container">
+        <div class="section-title">
+          <div>
+            <h2>Featured smartphones</h2>
+            <p class="section-sub">Search by brand, model, or use the filters.</p>
+          </div>
+          <form class="search" data-search-form action="index.html">
+            <input
+              type="search"
+              name="q"
+              placeholder="Search phones, brands, tags"
+              aria-label="Search products"
+              data-search-input
+            />
+            <button class="button secondary" type="submit">Search</button>
+          </form>
+        </div>
+        <div class="filters" data-filter-chips></div>
+        <div class="grid" data-product-grid></div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        NovaPhones provides a boutique selection of smartphones with WhatsApp
+        checkout. Need help? Reach us anytime.
+      </div>
+    </footer>
+
+    <script type="module" src="assets/js/pages/home.js"></script>
+  </body>
+</html>

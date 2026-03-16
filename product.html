@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NovaPhones | Product</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="container nav-inner">
+        <a class="brand" href="index.html">
+          <span class="brand-badge">NP</span>
+          <span>NovaPhones</span>
+        </a>
+        <form class="search nav-search" action="index.html">
+          <input
+            type="search"
+            name="q"
+            placeholder="Search phones, brands, tags"
+            aria-label="Search products"
+          />
+          <button class="button secondary" type="submit">Search</button>
+        </form>
+        <div class="nav-links">
+          <a href="index.html">Catalog</a>
+          <a href="cart.html" class="nav-cart">Cart <span data-cart-count>0</span></a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="section">
+      <div class="container" data-product></div>
+
+      <section class="container related">
+        <div class="section-title">
+          <h2>Related devices</h2>
+        </div>
+        <div class="grid" data-related></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        Secure your device via WhatsApp checkout. We respond within minutes.
+      </div>
+    </footer>
+
+    <script type="module" src="assets/js/pages/product.js"></script>
+  </body>
+</html>
