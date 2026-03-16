@@ -14,7 +14,14 @@ const show = (el, message) => {
 };
 
 const fetchJson = async (url, options) => {
-  const response = await fetch(url, options);
+  let response;
+  try {
+    response = await fetch(url, options);
+  } catch (error) {
+    const networkError = new Error('network_error');
+    networkError.cause = error;
+    throw networkError;
+  }
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
     const error = new Error(data.error || 'request_failed');
@@ -150,7 +157,15 @@ const init = async () => {
         const uploaded = await uploadToCloudinary(file);
         image = { url: uploaded.url, publicId: uploaded.publicId };
       } catch (error) {
-        show(formError, String(error.message || 'Image upload failed.'));
+        const message = String(error.message || 'Image upload failed.');
+        if (message === 'network_error') {
+          show(
+            formError,
+            'Network error reaching /api/admin/cloudinary/sign. Confirm you are on https:// and your Vercel domain SSL is active, then retry.'
+          );
+          return;
+        }
+        show(formError, message);
         return;
       }
     }
