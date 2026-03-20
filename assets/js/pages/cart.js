@@ -43,7 +43,7 @@ const renderCart = async () => {
   list.innerHTML = items
     .map(
       (item) => `
-      <div class="cart-item" data-cart-item="${item.key}">
+      <div class="cart-item" data-cart-item="${item.id}">
         <div>
           <h3>${item.name}</h3>
           <div class="cart-meta">
@@ -64,11 +64,6 @@ const renderCart = async () => {
                 ${colorOptions(item)}
               </select>
             </label>
-            ${
-              item.qty > 1 && Array.isArray(item.colors) && item.colors.length > 1
-                ? '<button class="button secondary" type="button" data-split>Split 1 to next color</button>'
-                : ''
-            }
             <button class="button secondary" type="button" data-remove>Remove</button>
           </div>
         </div>
@@ -89,16 +84,14 @@ const renderCart = async () => {
   updateCartBadge(cartService.getCount());
 
   list.querySelectorAll('[data-cart-item]').forEach((row) => {
-    const key = row.dataset.cartItem;
+    const id = row.dataset.cartItem;
     const qtyInput = row.querySelector('[data-qty-input]');
     const qtyWrap = row.querySelector('[data-quantity]');
     const removeBtn = row.querySelector('[data-remove]');
     const colorSelect = row.querySelector('[data-color-select]');
-    const splitBtn = row.querySelector('[data-split]');
-    const item = items.find((entry) => entry.key === key);
 
     const updateItem = (nextQty) => {
-      cartService.updateItem(key, nextQty);
+      cartService.updateItem(id, nextQty);
       renderCart();
     };
 
@@ -116,18 +109,12 @@ const renderCart = async () => {
     });
 
     colorSelect?.addEventListener('change', () => {
-      cartService.setItemColor(key, colorSelect.value);
-      renderCart();
-    });
-
-    splitBtn?.addEventListener('click', () => {
-      if (!item) return;
-      cartService.splitItemToNextColor(key, item.colors || []);
+      cartService.setItemColor(id, colorSelect.value);
       renderCart();
     });
 
     removeBtn.addEventListener('click', () => {
-      cartService.removeItem(key);
+      cartService.removeItem(id);
       renderCart();
     });
   });

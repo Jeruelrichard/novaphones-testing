@@ -7,9 +7,6 @@ const normalizeColor = (value, fallback = '') =>
     .trim()
     .replace(/\s+/g, ' ');
 
-const lineKey = (id, color) =>
-  `${String(id).trim()}::${normalizeColor(color).toLowerCase()}`;
-
 const safeNumber = (value, fallback = 1) => {
   const parsed = Number.parseInt(value, 10);
   if (Number.isNaN(parsed) || parsed < 1) return fallback;
@@ -24,13 +21,13 @@ const consolidate = (items) => {
     const id = String(item.id).trim();
     const color = normalizeColor(item.color);
     const qty = safeNumber(item.qty, 1);
-    const key = lineKey(id, color);
-    const existing = map.get(key);
+    const existing = map.get(id);
     if (existing) {
       existing.qty += qty;
+      if (color) existing.color = color;
       return;
     }
-    map.set(key, { id, color, qty });
+    map.set(id, { id, color, qty });
   });
 
   return Array.from(map.values());
@@ -62,61 +59,33 @@ export const cartService = {
   addItem(id, qty = 1, color = '') {
     const items = loadCart();
     const normalizedColor = normalizeColor(color);
-    const existing = items.find(
-      (item) => item.id === id && normalizeColor(item.color) === normalizedColor
-    );
+    const existing = items.find((item) => item.id === id);
     if (existing) {
       existing.qty = safeNumber(existing.qty + qty, 1);
+      if (normalizedColor) existing.color = normalizedColor;
     } else {
       items.push({ id, color: normalizedColor, qty: safeNumber(qty, 1) });
     }
     saveCart(items);
   },
-  updateItem(key, qty) {
+  updateItem(id, qty) {
     const items = loadCart();
     const nextQty = safeNumber(qty, 1);
     const updated = items.map((item) =>
-      lineKey(item.id, item.color) === key ? { ...item, qty: nextQty } : item
+      item.id === id ? { ...item, qty: nextQty } : item
     );
     saveCart(updated);
   },
-  removeItem(key) {
-    const items = loadCart().filter(
-      (item) => lineKey(item.id, item.color) !== key
-    );
+  removeItem(id) {
+    const items = loadCart().filter((item) => item.id !== id);
     saveCart(items);
   },
-  setItemColor(key, nextColor) {
+  setItemColor(id, nextColor) {
     const items = loadCart();
-    const target = items.find((item) => lineKey(item.id, item.color) === key);
+    const target = items.find((item) => item.id === id);
     if (!target) return;
 
     target.color = normalizeColor(nextColor, target.color);
-    saveCart(items);
-  },
-  splitItemToNextColor(key, availableColors = []) {
-    const colors = availableColors
-      .map((color) => normalizeColor(color))
-      .filter(Boolean);
-    if (!colors.length) return;
-
-    const items = loadCart();
-    const index = items.findIndex((item) => lineKey(item.id, item.color) === key);
-    if (index === -1) return;
-
-    const current = items[index];
-    const currentQty = safeNumber(current.qty, 1);
-    if (currentQty <= 1) return;
-
-    const currentColor = normalizeColor(current.color, colors[0]);
-    const currentColorIndex = colors.findIndex(
-      (color) => color.toLowerCase() === currentColor.toLowerCase()
-    );
-    const fallbackIndex = currentColorIndex === -1 ? 0 : currentColorIndex;
-    const nextColor = colors[(fallbackIndex + 1) % colors.length];
-
-    current.qty = currentQty - 1;
-    items.push({ id: current.id, color: nextColor, qty: 1 });
     saveCart(items);
   },
   clear() {
@@ -139,7 +108,6 @@ export const cartService = {
 
         detailed.push({
           ...product,
-          key: lineKey(product.id, selectedColor),
           selectedColor,
           qty: safeNumber(item.qty, 1),
           lineTotal: product.price * safeNumber(item.qty, 1),
