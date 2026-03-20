@@ -29,7 +29,9 @@ export const buildWhatsAppLink = ({
     const qty = Number(item.qty) || 1;
     const unit = typeof item.price === 'number' ? item.price : 0;
     const lineTotal = typeof item.lineTotal === 'number' ? item.lineTotal : unit * qty;
-    return `- ${item.name} x${qty} @ ${formatCurrency(unit)} = ${formatCurrency(lineTotal)}`;
+    const color = String(item.selectedColor || item.color || '').trim();
+    const colorPart = color ? ` | Color: ${color}` : '';
+    return `- ${item.name} x${qty}${colorPart} @ ${formatCurrency(unit)} = ${formatCurrency(lineTotal)}`;
   });
   const message = [
     `Hello ${storeConfig.name} team,`,
@@ -51,11 +53,11 @@ export const buildWhatsAppLink = ({
   return '#';
 };
 
-export const buildSingleItemMessage = (product, qty) => {
+export const buildSingleItemMessage = (product, qty, color = '') => {
   if (!product) return '';
   const total = product.price * qty;
   return buildWhatsAppLink({
-    items: [{ ...product, qty, lineTotal: total }],
+    items: [{ ...product, qty, selectedColor: color, lineTotal: total }],
     total,
     source: product.name,
   });

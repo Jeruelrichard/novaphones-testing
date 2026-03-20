@@ -5,6 +5,20 @@ import { buildWhatsAppLink } from '../utils/whatsapp.js';
 
 const DELIVERY_FEE = 0;
 
+const colorOptions = (item) => {
+  const colors = Array.isArray(item.colors) && item.colors.length
+    ? item.colors
+    : [item.selectedColor || 'Standard'];
+
+  return colors
+    .map((color) => {
+      const selected =
+        String(color).toLowerCase() === String(item.selectedColor || '').toLowerCase();
+      return `<option value="${color}" ${selected ? 'selected' : ''}>${color}</option>`;
+    })
+    .join('');
+};
+
 const renderCart = async () => {
   const { items, subtotal } = await cartService.getDetailedItems();
   const list = qs('[data-cart-items]');
@@ -29,12 +43,13 @@ const renderCart = async () => {
   list.innerHTML = items
     .map(
       (item) => `
-      <div class="cart-item" data-cart-item="${item.id}">
+      <div class="cart-item" data-cart-item="${item.key}">
         <div>
           <h3>${item.name}</h3>
           <div class="cart-meta">
             <span>${item.brand}</span>
             <span>${item.specs.display}</span>
+            <span>Color: ${item.selectedColor}</span>
             <span>${formatCurrency(item.price)}</span>
           </div>
           <div class="product-actions">
@@ -43,6 +58,17 @@ const renderCart = async () => {
               <input type="number" min="1" value="${item.qty}" data-qty-input />
               <button type="button" data-qty-action="plus">+</button>
             </div>
+            <label class="cart-color-select">
+              <span>Color</span>
+              <select data-color-select>
+                ${colorOptions(item)}
+              </select>
+            </label>
+            ${
+              item.qty > 1 && Array.isArray(item.colors) && item.colors.length > 1
+                ? '<button class="button secondary" type="button" data-split>Split 1 to next color</button>'
+                : ''
+            }
             <button class="button secondary" type="button" data-remove>Remove</button>
           </div>
         </div>
@@ -63,13 +89,16 @@ const renderCart = async () => {
   updateCartBadge(cartService.getCount());
 
   list.querySelectorAll('[data-cart-item]').forEach((row) => {
-    const id = row.dataset.cartItem;
+    const key = row.dataset.cartItem;
     const qtyInput = row.querySelector('[data-qty-input]');
     const qtyWrap = row.querySelector('[data-quantity]');
     const removeBtn = row.querySelector('[data-remove]');
+    const colorSelect = row.querySelector('[data-color-select]');
+    const splitBtn = row.querySelector('[data-split]');
+    const item = items.find((entry) => entry.key === key);
 
     const updateItem = (nextQty) => {
-      cartService.updateItem(id, nextQty);
+      cartService.updateItem(key, nextQty);
       renderCart();
     };
 
@@ -86,8 +115,19 @@ const renderCart = async () => {
       updateItem(next);
     });
 
+    colorSelect?.addEventListener('change', () => {
+      cartService.setItemColor(key, colorSelect.value);
+      renderCart();
+    });
+
+    splitBtn?.addEventListener('click', () => {
+      if (!item) return;
+      cartService.splitItemToNextColor(key, item.colors || []);
+      renderCart();
+    });
+
     removeBtn.addEventListener('click', () => {
-      cartService.removeItem(id);
+      cartService.removeItem(key);
       renderCart();
     });
   });

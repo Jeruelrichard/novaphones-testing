@@ -9,9 +9,17 @@ const getQueryId = () => {
   return params.get('id');
 };
 
+const getProductColors = (product) => {
+  const colors = Array.isArray(product?.colors)
+    ? product.colors.map((color) => String(color || '').trim()).filter(Boolean)
+    : [];
+  return colors.length ? colors : ['Standard'];
+};
+
 const renderProduct = (product) => {
   const container = qs('[data-product]');
   if (!container || !product) return;
+  const colors = getProductColors(product);
 
   container.innerHTML = `
       <div class="product-layout">
@@ -37,7 +45,25 @@ const renderProduct = (product) => {
             )
             .join('')}
         </div>
-        <div class="cart-meta">Colors: ${product.colors.join(', ')}</div>
+        <div class="color-picker">
+          <div class="cart-meta">Pick color</div>
+          <div class="color-options" data-color-options>
+            ${colors
+              .map(
+                (color, index) => `
+                <button
+                  type="button"
+                  class="color-chip ${index === 0 ? 'active' : ''}"
+                  data-color-option="${color}"
+                >
+                  ${color}
+                </button>
+              `
+              )
+              .join('')}
+          </div>
+          <div class="cart-meta">Selected: <strong data-selected-color>${colors[0]}</strong></div>
+        </div>
         <div class="product-actions">
           <div class="quantity" data-quantity>
             <button type="button" data-qty-action="minus">-</button>
@@ -83,14 +109,19 @@ const renderRelated = (items) => {
 };
 
 const attachActions = (product) => {
+  const colors = getProductColors(product);
   const qtyInput = qs('[data-qty-input]');
   const quantityWrap = qs('[data-quantity]');
+  const colorWrap = qs('[data-color-options]');
+  const selectedColorEl = qs('[data-selected-color]');
   const buyNow = qs('[data-buy-now]');
   const addToCart = qs('[data-add-to-cart]');
+  let selectedColor = colors[0];
 
   const setBuyNowLink = () => {
     const qty = Math.max(1, Number.parseInt(qtyInput.value, 10) || 1);
-    buyNow.href = buildSingleItemMessage(product, qty);
+    buyNow.href = buildSingleItemMessage(product, qty, selectedColor);
+    if (selectedColorEl) selectedColorEl.textContent = selectedColor;
   };
 
   quantityWrap?.addEventListener('click', (event) => {
@@ -108,9 +139,22 @@ const attachActions = (product) => {
     setBuyNowLink();
   });
 
+  colorWrap?.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-color-option]');
+    if (!button) return;
+    selectedColor = String(button.getAttribute('data-color-option') || colors[0]);
+    colorWrap.querySelectorAll('[data-color-option]').forEach((node) => {
+      node.classList.toggle(
+        'active',
+        node.getAttribute('data-color-option') === selectedColor
+      );
+    });
+    setBuyNowLink();
+  });
+
   addToCart?.addEventListener('click', () => {
     const qty = Math.max(1, Number.parseInt(qtyInput.value, 10) || 1);
-    cartService.addItem(product.id, qty);
+    cartService.addItem(product.id, qty, selectedColor);
     updateCartBadge(cartService.getCount());
   });
 
