@@ -58,9 +58,11 @@ export const cartService = {
   },
   async getDetailedItems() {
     const items = loadCart();
+    const products = await catalogService.getProducts();
+    const byId = new Map(products.map((product) => [product.id, product]));
     const detailed = [];
     for (const item of items) {
-      const product = await catalogService.getProductById(item.id);
+      const product = byId.get(item.id);
       if (product) {
         detailed.push({
           ...product,

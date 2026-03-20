@@ -128,4 +128,100 @@ export const firebaseProductStore = {
     await ref.delete();
     return true;
   },
+
+  async update(id, input) {
+    const fb = await getFirebase();
+    if (!fb) {
+      const error = new Error('firebase_not_configured');
+      error.statusCode = 500;
+      throw error;
+    }
+
+    const ref = fb.firestore.collection(COLLECTION).doc(id);
+    const existingDoc = await ref.get();
+    if (!existingDoc.exists) return null;
+
+    const existing = existingDoc.data() || {};
+
+    const name = String(input?.name ?? existing.name ?? '').trim();
+    const brand = String(input?.brand ?? existing.brand ?? '').trim();
+    const price = Number.parseInt(input?.price ?? existing.price, 10);
+
+    if (!name || !brand || Number.isNaN(price) || price < 0) {
+      const error = new Error('invalid_product');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const badge = String(input?.badge ?? existing.badge ?? 'New').trim() || 'New';
+    const short = String(input?.short ?? existing.short ?? '').trim();
+    const description = String(
+      input?.description ?? existing.description ?? ''
+    ).trim();
+    const colors = Array.isArray(input?.colors)
+      ? input.colors
+      : Array.isArray(existing.colors)
+        ? existing.colors
+        : [];
+    const tags = Array.isArray(input?.tags)
+      ? input.tags
+      : Array.isArray(existing.tags)
+        ? existing.tags
+        : [];
+
+    const specsSource =
+      input?.specs && typeof input.specs === 'object'
+        ? input.specs
+        : existing.specs && typeof existing.specs === 'object'
+          ? existing.specs
+          : {};
+    const specs = Object.fromEntries(
+      Object.entries(specsSource).filter(([, value]) => String(value || '').trim())
+    );
+
+    let imageUrl = existing.imageUrl || null;
+    let imagePublicId = existing.imagePublicId || null;
+
+    if (input?.image?.url) {
+      const nextUrl = String(input.image.url);
+      const nextPublicId = input?.image?.publicId
+        ? String(input.image.publicId)
+        : null;
+
+      if (
+        imagePublicId &&
+        imagePublicId !== nextPublicId &&
+        cloudinary.isConfigured()
+      ) {
+        try {
+          await cloudinary.destroyImage(String(imagePublicId));
+        } catch (error) {
+          // Ignore Cloudinary errors on image replace.
+        }
+      }
+
+      imageUrl = nextUrl;
+      imagePublicId = nextPublicId;
+    }
+
+    const updated = {
+      ...existing,
+      id,
+      name,
+      brand,
+      price,
+      badge,
+      short,
+      description,
+      specs,
+      colors,
+      tags,
+      imageUrl,
+      imagePublicId,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await ref.set(updated, { merge: false });
+    return updated;
+  },
 };

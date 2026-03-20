@@ -9,7 +9,12 @@ export default async function handler(req, res) {
 
   try {
     const products = await productStore.getAll();
-    sendJson(res, 200, products);
+    sendJson(
+      res,
+      200,
+      products,
+      { 'Cache-Control': 'public, s-maxage=45, stale-while-revalidate=300' }
+    );
   } catch (error) {
     const status = error.statusCode || 500;
     sendJson(res, status, { error: error.message || 'server_error' });

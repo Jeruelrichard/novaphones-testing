@@ -21,7 +21,12 @@ export default async function handler(req, res) {
       sendJson(res, 404, { error: 'not_found' });
       return;
     }
-    sendJson(res, 200, product);
+    sendJson(
+      res,
+      200,
+      product,
+      { 'Cache-Control': 'public, s-maxage=45, stale-while-revalidate=300' }
+    );
   } catch (error) {
     const status = error.statusCode || 500;
     sendJson(res, status, { error: error.message || 'server_error' });

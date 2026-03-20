@@ -37,6 +37,11 @@ export const productStore = {
     return store.create(input);
   },
 
+  async update(id, input) {
+    const store = await pickStore();
+    return store.update(id, input);
+  },
+
   async remove(id) {
     const store = await pickStore();
     return store.remove(id);

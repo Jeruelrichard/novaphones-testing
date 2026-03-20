@@ -7,6 +7,8 @@ const parseCsv = (value) =>
     .map((part) => part.trim())
     .filter(Boolean);
 
+const toCsv = (value) => (Array.isArray(value) ? value.join(', ') : '');
+
 const show = (el, message) => {
   if (!el) return;
   el.hidden = !message;
@@ -33,8 +35,7 @@ const fetchJson = async (url, options) => {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Vercel/edge/network hiccups can occasionally cause a transient fetch failure on the
-// first request. Retry once to make the UX resilient without hiding persistent issues.
+// Retry once for transient edge/network glitches.
 const getCloudinarySignature = async () => {
   const attempt = () =>
     fetchJson('/api/admin/cloudinary/sign', {
@@ -80,6 +81,13 @@ const uploadToCloudinary = async (file) => {
   };
 };
 
+const state = {
+  products: [],
+  editingId: null,
+};
+
+const getProductById = (id) => state.products.find((item) => item.id === id) || null;
+
 const renderProducts = (products) => {
   const wrap = qs('[data-products]');
   if (!wrap) return;
@@ -107,6 +115,7 @@ const renderProducts = (products) => {
           </div>
           <div class="admin-product-actions">
             <a class="button secondary" href="/product.html?id=${item.id}" target="_blank" rel="noreferrer">View</a>
+            <button class="button secondary" type="button" data-edit="${item.id}">Edit</button>
             <button class="button secondary" type="button" data-delete="${item.id}">Delete</button>
           </div>
         </div>
@@ -117,7 +126,50 @@ const renderProducts = (products) => {
 
 const loadProducts = async () => {
   const products = await fetchJson('/api/admin/products');
+  state.products = products;
   renderProducts(products);
+};
+
+const setEditMode = ({ id, refs }) => {
+  state.editingId = id || null;
+  const editing = Boolean(state.editingId);
+
+  if (refs.formTitle) {
+    refs.formTitle.textContent = editing ? 'Edit product' : 'Add product';
+  }
+  if (refs.submitLabel) {
+    refs.submitLabel.textContent = editing ? 'Save changes' : 'Upload product';
+  }
+  if (refs.resetLabel) {
+    refs.resetLabel.textContent = editing ? 'Cancel edit' : 'Clear';
+  }
+};
+
+const fillForm = (product) => {
+  if (!product) return;
+  const specs = product.specs || {};
+
+  const setValue = (selector, value) => {
+    const input = qs(selector);
+    if (input) input.value = value || '';
+  };
+
+  setValue('[data-name]', product.name);
+  setValue('[data-brand]', product.brand);
+  setValue('[data-price]', String(product.price || ''));
+  setValue('[data-badge]', product.badge);
+  setValue('[data-short]', product.short);
+  setValue('[data-description]', product.description);
+  setValue('[data-colors]', toCsv(product.colors));
+  setValue('[data-tags]', toCsv(product.tags));
+
+  setValue('[data-spec-display]', specs.display);
+  setValue('[data-spec-camera]', specs.camera);
+  setValue('[data-spec-battery]', specs.battery);
+  setValue('[data-spec-storage]', specs.storage);
+
+  const imageInput = qs('[data-image]');
+  if (imageInput) imageInput.value = '';
 };
 
 const init = async () => {
@@ -133,7 +185,12 @@ const init = async () => {
   const logoutBtn = qs('[data-logout]');
   const formError = qs('[data-form-error]');
   const formSuccess = qs('[data-form-success]');
+  const formTitle = qs('[data-form-title]');
+  const submitLabel = qs('[data-submit-label]');
+  const resetLabel = qs('[data-reset-label]');
+  const refs = { formTitle, submitLabel, resetLabel };
 
+  setEditMode({ id: null, refs });
   await loadProducts();
 
   refreshBtn?.addEventListener('click', async () => {
@@ -190,36 +247,76 @@ const init = async () => {
       }
     }
 
+    const payload = {
+      name,
+      brand,
+      price,
+      badge,
+      short,
+      description,
+      colors,
+      tags,
+      specs,
+      image,
+    };
+
+    const editingId = state.editingId;
+    const endpoint = editingId
+      ? `/api/admin/products/${encodeURIComponent(editingId)}`
+      : '/api/admin/products';
+    const method = editingId ? 'PATCH' : 'POST';
+
+    if (submitLabel) submitLabel.disabled = true;
     try {
-      await fetchJson('/api/admin/products', {
-        method: 'POST',
+      await fetchJson(endpoint, {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          brand,
-          price,
-          badge,
-          short,
-          description,
-          colors,
-          tags,
-          specs,
-          image,
-        }),
+        body: JSON.stringify(payload),
       });
 
       form.reset();
-      show(formSuccess, 'Product uploaded.');
+      setEditMode({ id: null, refs });
+      show(formSuccess, editingId ? 'Product updated.' : 'Product uploaded.');
       await loadProducts();
     } catch (error) {
-      show(formError, 'Upload failed. Check fields and image size.');
+      show(
+        formError,
+        editingId
+          ? 'Update failed. Check fields and try again.'
+          : 'Upload failed. Check fields and image size.'
+      );
+    } finally {
+      if (submitLabel) submitLabel.disabled = false;
     }
   });
 
+  form?.addEventListener('reset', () => {
+    show(formError, '');
+    show(formSuccess, '');
+    setEditMode({ id: null, refs });
+  });
+
   document.addEventListener('click', async (event) => {
-    const button = event.target.closest('[data-delete]');
-    if (!button) return;
-    const id = button.getAttribute('data-delete');
+    const editButton = event.target.closest('[data-edit]');
+    if (editButton) {
+      const id = editButton.getAttribute('data-edit');
+      if (!id) return;
+      const product = getProductById(id);
+      if (!product) {
+        show(formError, 'Could not load product details for editing.');
+        return;
+      }
+      fillForm(product);
+      setEditMode({ id, refs });
+      show(formError, '');
+      show(formSuccess, `Editing "${product.name}". Save changes when done.`);
+      form?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+
+    const deleteButton = event.target.closest('[data-delete]');
+    if (!deleteButton) return;
+    const id = deleteButton.getAttribute('data-delete');
     if (!id) return;
 
     const confirmed = window.confirm('Delete this product?');
@@ -229,6 +326,10 @@ const init = async () => {
       await fetchJson(`/api/admin/products/${encodeURIComponent(id)}`, {
         method: 'DELETE',
       });
+      if (state.editingId === id) {
+        form?.reset();
+        setEditMode({ id: null, refs });
+      }
       await loadProducts();
     } catch (error) {
       show(formError, 'Delete failed.');

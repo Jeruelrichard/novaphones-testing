@@ -9,6 +9,11 @@ const state = {
   searchTerm: '',
 };
 
+const productsSignature = (products) =>
+  products
+    .map((item) => `${item.id}:${item.updatedAt || ''}:${item.price}`)
+    .join('|');
+
 const renderFilters = () => {
   const filterWrap = qs('[data-filter-chips]');
   if (!filterWrap) return;
@@ -90,9 +95,9 @@ const renderProducts = () => {
 const renderKPIs = () => {
   const total = state.products.length;
   const brands = new Set(state.products.map((item) => item.brand)).size;
-  const avgPrice = Math.round(
-    state.products.reduce((sum, item) => sum + item.price, 0) / total
-  );
+  const avgPrice = total
+    ? Math.round(state.products.reduce((sum, item) => sum + item.price, 0) / total)
+    : 0;
   const totalEl = qs('[data-kpi-total]');
   const brandEl = qs('[data-kpi-brands]');
   const priceEl = qs('[data-kpi-price]');
@@ -135,7 +140,7 @@ const attachSearchEvents = () => {
 };
 
 const init = async () => {
-  state.products = await catalogService.getProducts();
+  state.products = catalogService.getQuickProducts();
   const query = new URLSearchParams(window.location.search);
   const search = query.get('q');
   if (search) {
@@ -148,6 +153,22 @@ const init = async () => {
   attachSearchEvents();
   renderProducts();
   updateCartBadge(cartService.getCount());
+
+  const before = productsSignature(state.products);
+  const freshProducts = await catalogService.getProducts();
+  const after = productsSignature(freshProducts);
+  if (before !== after) {
+    state.products = freshProducts;
+    if (
+      state.activeFilter !== 'All' &&
+      !state.products.some((item) => item.brand === state.activeFilter)
+    ) {
+      state.activeFilter = 'All';
+    }
+    renderKPIs();
+    renderFilters();
+    renderProducts();
+  }
 };
 
 init();

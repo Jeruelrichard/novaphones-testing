@@ -156,7 +156,12 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && pathname === '/api/products') {
     try {
       const products = await productStore.getAll();
-      sendJson(res, 200, products);
+      sendJson(
+        res,
+        200,
+        products,
+        { 'Cache-Control': 'public, s-maxage=45, stale-while-revalidate=300' }
+      );
     } catch (error) {
       const status = error.statusCode || 500;
       sendJson(res, status, { error: error.message || 'server_error' });
@@ -172,7 +177,12 @@ const server = http.createServer(async (req, res) => {
         sendJson(res, 404, { error: 'not_found' });
         return;
       }
-      sendJson(res, 200, product);
+      sendJson(
+        res,
+        200,
+        product,
+        { 'Cache-Control': 'public, s-maxage=45, stale-while-revalidate=300' }
+      );
     } catch (error) {
       const status = error.statusCode || 500;
       sendJson(res, status, { error: error.message || 'server_error' });
@@ -288,10 +298,29 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (pathname.startsWith('/api/admin/products/') && req.method === 'DELETE') {
+  if (
+    pathname.startsWith('/api/admin/products/') &&
+    (req.method === 'DELETE' || req.method === 'PATCH')
+  ) {
     const user = requireAdmin(req, res, AUTH_SECRET);
     if (!user) return;
     const id = pathname.replace('/api/admin/products/', '');
+    if (req.method === 'PATCH') {
+      try {
+        const body = await readJsonBody(req, { maxBytes: 12_000_000 });
+        const updated = await productStore.update(id, body || {});
+        if (!updated) {
+          sendJson(res, 404, { error: 'not_found' });
+          return;
+        }
+        sendJson(res, 200, updated);
+      } catch (error) {
+        const status = error.statusCode || 500;
+        sendJson(res, status, { error: error.message || 'server_error' });
+      }
+      return;
+    }
+
     try {
       const ok = await productStore.remove(id);
       if (!ok) {

@@ -61,6 +61,17 @@ const saveImageFromDataUrl = async (dataUrl, originalName = 'upload') => {
   return { url: `/uploads/${filename}` };
 };
 
+const deleteLocalUpload = async (imageUrl) => {
+  if (!imageUrl || !String(imageUrl).startsWith('/uploads/')) return;
+  const filename = String(imageUrl).replace('/uploads/', '');
+  const filePath = path.resolve(uploadsDir, filename);
+  try {
+    await fs.unlink(filePath);
+  } catch (error) {
+    // Ignore missing files.
+  }
+};
+
 export const fileProductStore = {
   async init() {
     await ensureDirs();
@@ -172,5 +183,116 @@ export const fileProductStore = {
     }
 
     return true;
+  },
+
+  async update(id, input) {
+    await ensureDirs();
+    const products = await readProducts();
+    const index = products.findIndex((item) => item.id === id);
+    if (index === -1) return null;
+
+    const existing = products[index];
+    const name = String(input?.name ?? existing.name ?? '').trim();
+    const brand = String(input?.brand ?? existing.brand ?? '').trim();
+    const price = Number.parseInt(input?.price ?? existing.price, 10);
+
+    if (!name || !brand || Number.isNaN(price) || price < 0) {
+      const error = new Error('invalid_product');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const badge = String(input?.badge ?? existing.badge ?? 'New').trim() || 'New';
+    const short = String(input?.short ?? existing.short ?? '').trim();
+    const description = String(
+      input?.description ?? existing.description ?? ''
+    ).trim();
+    const colors = Array.isArray(input?.colors)
+      ? input.colors
+      : Array.isArray(existing.colors)
+        ? existing.colors
+        : [];
+    const tags = Array.isArray(input?.tags)
+      ? input.tags
+      : Array.isArray(existing.tags)
+        ? existing.tags
+        : [];
+
+    const specsSource =
+      input?.specs && typeof input.specs === 'object'
+        ? input.specs
+        : existing.specs && typeof existing.specs === 'object'
+          ? existing.specs
+          : {};
+    const specs = Object.fromEntries(
+      Object.entries(specsSource).filter(([, value]) => String(value || '').trim())
+    );
+
+    let imageUrl = existing.imageUrl || null;
+    let imagePublicId = existing.imagePublicId || null;
+
+    if (input?.image?.url) {
+      const nextUrl = String(input.image.url);
+      const nextPublicId = input?.image?.publicId
+        ? String(input.image.publicId)
+        : null;
+
+      if (imageUrl && imageUrl !== nextUrl) {
+        await deleteLocalUpload(imageUrl);
+      }
+      if (
+        imagePublicId &&
+        imagePublicId !== nextPublicId &&
+        cloudinary.isConfigured()
+      ) {
+        try {
+          await cloudinary.destroyImage(String(imagePublicId));
+        } catch (error) {
+          // Ignore Cloudinary errors on image replace.
+        }
+      }
+
+      imageUrl = nextUrl;
+      imagePublicId = nextPublicId;
+    } else if (input?.image?.dataUrl) {
+      const saved = await saveImageFromDataUrl(
+        String(input.image.dataUrl),
+        String(input.image.filename || name)
+      );
+      if (saved?.url) {
+        if (imageUrl && imageUrl !== saved.url) {
+          await deleteLocalUpload(imageUrl);
+        }
+        if (imagePublicId && cloudinary.isConfigured()) {
+          try {
+            await cloudinary.destroyImage(String(imagePublicId));
+          } catch (error) {
+            // Ignore Cloudinary errors on image replace.
+          }
+        }
+        imageUrl = saved.url;
+        imagePublicId = null;
+      }
+    }
+
+    const updated = {
+      ...existing,
+      name,
+      brand,
+      price,
+      badge,
+      short,
+      description,
+      specs,
+      colors,
+      tags,
+      imageUrl,
+      imagePublicId,
+      updatedAt: new Date().toISOString(),
+    };
+
+    products[index] = updated;
+    await writeProducts(products);
+    return updated;
   },
 };
