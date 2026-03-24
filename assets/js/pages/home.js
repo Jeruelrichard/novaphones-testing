@@ -1,6 +1,5 @@
 import { catalogService } from '../services/catalog.js';
 import { cartService } from '../services/cart.js';
-import { initNavSearch } from '../utils/nav-search.js';
 import { formatCurrency } from '../utils/format.js';
 import { qs, qsa, updateCartBadge } from '../utils/dom.js';
 
@@ -142,7 +141,6 @@ const attachSearchEvents = () => {
 
 const init = async () => {
   state.products = catalogService.getQuickProducts();
-  initNavSearch();
   const query = new URLSearchParams(window.location.search);
   const search = query.get('q');
   if (search) {
