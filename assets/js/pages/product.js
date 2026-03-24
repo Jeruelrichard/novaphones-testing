@@ -2,6 +2,7 @@ import { catalogService } from '../services/catalog.js';
 import { cartService } from '../services/cart.js';
 import { formatCurrency } from '../utils/format.js';
 import { qs, updateCartBadge } from '../utils/dom.js';
+import { initNavSearch } from '../utils/nav-search.js';
 import { buildSingleItemMessage } from '../utils/whatsapp.js';
 
 const getQueryId = () => {
@@ -162,6 +163,7 @@ const attachActions = (product) => {
 };
 
 const init = async () => {
+  initNavSearch();
   const id = getQueryId();
   const product = await catalogService.getProductById(id);
   const container = qs('[data-product]');
