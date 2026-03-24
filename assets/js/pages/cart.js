@@ -1,6 +1,7 @@
 import { cartService } from '../services/cart.js';
 import { formatCurrency } from '../utils/format.js';
 import { qs, updateCartBadge } from '../utils/dom.js';
+import { initMobileNav } from '../utils/nav.js';
 import { buildWhatsAppLink } from '../utils/whatsapp.js';
 
 const DELIVERY_FEE = 0;
@@ -120,4 +121,5 @@ const renderCart = async () => {
   });
 };
 
+initMobileNav();
 renderCart();

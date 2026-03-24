@@ -2,6 +2,8 @@ import { catalogService } from '../services/catalog.js';
 import { cartService } from '../services/cart.js';
 import { formatCurrency } from '../utils/format.js';
 import { qs, updateCartBadge } from '../utils/dom.js';
+import { showCartFeedback } from '../utils/cart-feedback.js';
+import { initMobileNav } from '../utils/nav.js';
 import { buildSingleItemMessage } from '../utils/whatsapp.js';
 
 const getQueryId = () => {
@@ -156,12 +158,14 @@ const attachActions = (product) => {
     const qty = Math.max(1, Number.parseInt(qtyInput.value, 10) || 1);
     cartService.addItem(product.id, qty, selectedColor);
     updateCartBadge(cartService.getCount());
+    showCartFeedback();
   });
 
   setBuyNowLink();
 };
 
 const init = async () => {
+  initMobileNav();
   const id = getQueryId();
   const product = await catalogService.getProductById(id);
   const container = qs('[data-product]');

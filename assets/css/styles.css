@@ -110,6 +110,51 @@ button {
   border: 1px solid var(--border);
 }
 
+.nav-mobile-actions {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.nav-icon-button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: inline-grid;
+  place-items: center;
+  color: var(--text);
+  position: relative;
+}
+
+.nav-icon-button svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nav-icon-count {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #ffffff;
+  display: inline-grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  position: absolute;
+  top: -2px;
+  right: -2px;
+}
+
 .hero {
   padding: 90px 0 50px;
 }
@@ -512,6 +557,62 @@ button {
   font-weight: 600;
 }
 
+.cart-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 23, 18, 0.42);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  z-index: 60;
+}
+
+.cart-modal-backdrop[hidden] {
+  display: none;
+}
+
+.cart-modal {
+  width: min(420px, 100%);
+  background: var(--surface);
+  border-radius: 28px;
+  padding: 34px 28px 26px;
+  box-shadow: 0 24px 60px rgba(15, 30, 22, 0.18);
+  text-align: center;
+}
+
+.cart-modal-icon {
+  width: 86px;
+  height: 86px;
+  margin: 0 auto 22px;
+  border-radius: 50%;
+  background: #0fbe4b;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+}
+
+.cart-modal-icon svg {
+  width: 40px;
+  height: 40px;
+}
+
+.cart-modal h3 {
+  margin: 0;
+  font-size: clamp(1.4rem, 4vw, 1.9rem);
+  font-family: 'Syne', sans-serif;
+}
+
+.cart-modal-actions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.cart-modal-actions .button {
+  min-width: 150px;
+}
+
 .empty {
   text-align: center;
   padding: 60px 20px;
@@ -695,8 +796,35 @@ button {
 }
 
 @media (max-width: 640px) {
+  .nav-inner {
+    gap: 12px;
+  }
+
+  .brand {
+    min-width: 0;
+  }
+
+  .brand span:last-child {
+    font-size: 0.95rem;
+  }
+
   .nav-links {
     display: none;
+  }
+
+  .nav-mobile-actions {
+    display: flex;
+  }
+
+  .nav-search {
+    display: none;
+    width: 100%;
+    flex-basis: 100%;
+    order: 3;
+  }
+
+  .nav.nav--search-open .nav-search {
+    display: flex;
   }
 
   .hero {
@@ -716,5 +844,13 @@ button {
   .search input {
     min-width: 0;
     flex: 1;
+  }
+
+  .cart-modal-actions {
+    flex-direction: column;
+  }
+
+  .cart-modal-actions .button {
+    width: 100%;
   }
 }

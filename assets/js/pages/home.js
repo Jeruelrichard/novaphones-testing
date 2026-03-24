@@ -2,6 +2,7 @@ import { catalogService } from '../services/catalog.js';
 import { cartService } from '../services/cart.js';
 import { formatCurrency } from '../utils/format.js';
 import { qs, qsa, updateCartBadge } from '../utils/dom.js';
+import { initMobileNav } from '../utils/nav.js';
 
 const state = {
   products: [],
@@ -140,6 +141,7 @@ const attachSearchEvents = () => {
 };
 
 const init = async () => {
+  initMobileNav();
   state.products = catalogService.getQuickProducts();
   const query = new URLSearchParams(window.location.search);
   const search = query.get('q');
