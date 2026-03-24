@@ -45,11 +45,13 @@ const navigateToProduct = (product) => {
 
 const renderSuggestions = (menu, suggestions, activeIndex) => {
   if (!suggestions.length) {
+    menu.parentElement?.classList.remove('search--open');
     menu.hidden = true;
     menu.innerHTML = '';
     return;
   }
 
+  menu.parentElement?.classList.add('search--open');
   menu.hidden = false;
   menu.innerHTML = suggestions
     .map((product, index) => {

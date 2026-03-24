@@ -544,6 +544,11 @@ button {
   position: relative;
 }
 
+.search--open {
+  border-bottom-left-radius: 22px;
+  border-bottom-right-radius: 22px;
+}
+
 .search input {
   border: none;
   background: transparent;
@@ -569,17 +574,22 @@ button {
 
 .search-suggestions {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% - 14px);
   left: 0;
   right: 0;
   display: grid;
   gap: 4px;
-  padding: 10px;
+  padding: 22px 10px 10px;
   background: rgba(255, 255, 255, 0.97);
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-top: none;
+  border-radius: 0 0 22px 22px;
   box-shadow: 0 18px 42px rgba(15, 34, 27, 0.12);
   z-index: 30;
+}
+
+.search-suggestions[hidden] {
+  display: none;
 }
 
 .search-suggestion {
